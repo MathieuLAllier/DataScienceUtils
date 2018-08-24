@@ -1,6 +1,6 @@
+import numpy as np
 import pandas as pd
 from pandas.api.types import CategoricalDtype
-import numpy as np
 
 
 def display_all(df, rows=10):
@@ -8,7 +8,7 @@ def display_all(df, rows=10):
         print(df)
 
 
-def auto_change_type(df, type_dict):
+def auto_set_type(df, type_dict):
     """
     :param df: Pandas DataFrame
     :param type_dict: Dictionary of column name and type to format to in the format:
@@ -69,9 +69,9 @@ def auto_dummies(df):
     return pd.get_dummies(df, columns=list(df.select_dtypes(include='category').columns), drop_first=True)
 
 
-def get_category_size(df):
+def get_category_size(df, max_cat=50):
     cat = df.select_dtypes(include='category').columns
-    return [(c, len(df[c].cat.categories), min(50, len(df[c].cat.categories) // 2)) for c in cat]
+    return [(c, len(df[c].cat.categories), min(max_cat, len(df[c].cat.categories) // 2)) for c in cat]
 
 
 def sort_columns(df):
