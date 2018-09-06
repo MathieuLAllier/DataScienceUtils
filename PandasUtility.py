@@ -3,8 +3,13 @@ import pandas as pd
 from pandas.api.types import CategoricalDtype
 
 
-def display_all(df, rows=10):
-    with pd.option_context("display.max_rows", rows, "display.max_columns", 1000):
+def display_all(df, rows=10, columns=1000):
+    """
+    :param df: Pandas DataFrame
+    :param rows: Max Number of rows to print
+    :param columns: Max Number of columns to print
+    """
+    with pd.option_context("display.max_rows", rows, "display.max_columns", columns):
         print(df)
 
 
@@ -83,3 +88,4 @@ if __name__ == '__main__':
     dfs = pd.DataFrame(np.random.randn(5000, 4), index=dates, columns=list('ABCD'))
     dfs = auto_dates(dfs)
     dfs = sort_columns(dfs)
+    display_all(dfs)
