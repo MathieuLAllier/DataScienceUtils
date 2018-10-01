@@ -35,7 +35,7 @@ def auto_dates(df, date_name='date', time=False):
     :param time: Set to True if time part is necessary
     :return: Pandas DataFrame
     """
-    T = df.index.to_series() if isinstance(df.index, pd.DatetimeIndex) else df[date_name]
+    T = df.index.to_series() if isinstance(df.index, pd.DatetimeIndex) else pd.to_datetime(df[date_name])
 
     if time:
         df['hour'] = T.dt.hour
