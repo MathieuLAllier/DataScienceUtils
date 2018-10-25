@@ -1,3 +1,8 @@
-.idea
-__init__.py
+# Python
 __pycache__
+
+# Pycharm
+.idea
+
+# Other
+/__init__.py

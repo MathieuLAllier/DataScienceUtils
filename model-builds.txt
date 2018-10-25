@@ -1,0 +1,4 @@
+# # # # # # # # # #  KERAS  # # # # # # # # # #
+
+# Resnet
+https://engmrk.com/residual-networks-resnets/?utm_campaign=News&utm_medium=Community&utm_source=DataCamp.com
