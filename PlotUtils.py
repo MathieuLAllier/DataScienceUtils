@@ -12,3 +12,9 @@ def set_size(w, h, ax=None):
     figw = float(w)/(r-l)
     figh = float(h)/(t-b)
     ax.figure.set_size_inches(figw, figh)
+
+
+def shap_force_plot(class_index, n_index, explainer, shap_values):
+    import shap
+    shap.initjs()
+    return shap.force_plot(explainer.expected_value[class_index], shap_values[class_index][n_index, :])
