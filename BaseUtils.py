@@ -1,5 +1,6 @@
 import logging
 
+import os
 import time
 import atexit
 import crayons
@@ -50,33 +51,57 @@ class EmailHandler:
     def __radd__(self, attachment):
         self.addAttachments(attachment)
 
-    def prepareImage(self, path):
+    def prepareImage(self, image_dict):
         """
-        :param path: String -- Saved image complete path
+        :param image_dict: Dict -- Specified Dict
         :return: Image File ready to include in email body
         """
+
+        path = image_dict.get('image')
+        options = image_dict.get('options')
         name = path.split('/')[-1]
 
         # Add HTML Tag for image
         self.msg.attach(MIMEText('<img src="cid:{}">'.format(name), 'html'))
 
-        with open(path, 'rb') as file:
-            file = MIMEImage(file.read(), 'png')
+        try:
+            with open(path, 'rb') as file:
+                file = MIMEImage(file.read(), 'png')
+
+        except FileNotFoundError:
+            self.logger.error('Image on path {} not found'.format(path))
+            return
+
+        # Adding Options
+        if options.get('inline'):
             file.add_header('Content-ID', '<{}>'.format(name))
-            return file
+
+        if options.get('delete'):
+            os.remove(path)
+
+        return file
 
     def addAttachments(self, attachments):
         """
         :param attachments: List(Dict(attachment_type: attachment)
 
-        Available attachement and object type:
-            image: path to saved png image
-            dataframe: pandas dataframe
+        Available attachments and object type:
+            Image: path to saved png image
+                options:
+                    1. Inline: Boolean -- True to insert image inline with email
+                    2. Delete: Boolean -- True to delete image after integration
+            Text : String
+            DataFrame: pandas DataFrame
         """
+
+        if not isinstance(attachments, list): attachments = [attachments]
 
         for attachment in attachments:
             if attachment.get('image'):
-                self.msg.attach(self.prepareImage(attachment.get('image')))
+                self.msg.attach(self.prepareImage(attachment))
+
+            elif attachment.get('text'):
+                self.msg.attach(MIMEText(attachment.get('text')))
 
             elif attachment.get('dataframe') is not None:
                 file = attachment.get('dataframe').to_html()
