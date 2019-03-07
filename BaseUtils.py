@@ -14,6 +14,19 @@ from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 
 
+# Email Handler
+import os
+import atexit
+import smtplib
+import logging
+
+from email import encoders
+from email.mime.base import MIMEBase
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
+
+
 class EmailHandler:
 
     def __init__(self, address='', password='', server='smtp.gmail.com:587'):
@@ -73,11 +86,12 @@ class EmailHandler:
             return
 
         # Adding Options
-        if options.get('inline'):
-            file.add_header('Content-ID', '<{}>'.format(name))
+        if options:
+            if options.get('inline'):
+                file.add_header('Content-ID', '<{}>'.format(name))
 
-        if options.get('delete'):
-            os.remove(path)
+            if options.get('delete'):
+                os.remove(path)
 
         return file
 
@@ -86,6 +100,9 @@ class EmailHandler:
         :param attachments: List(Dict(attachment_type: attachment)
 
         Available attachments and object type:
+            Csv: path to saved CSV
+                options:
+                    1. Delete: Boolean -- True to delete Csv file after integration
             Image: path to saved png image
                 options:
                     1. Inline: Boolean -- True to insert image inline with email
@@ -102,6 +119,22 @@ class EmailHandler:
 
             elif attachment.get('text'):
                 self.msg.attach(MIMEText(attachment.get('text')))
+
+            elif attachment.get('csv'):
+
+                path = attachment.get('csv')
+                options = attachment.get('options')
+                part = MIMEBase('application', 'octet-stream')
+
+                with open(path, 'rb') as f:
+                    part.set_payload(f.read())
+                    encoders.encode_base64(part)
+                    part.add_header('Content-Disposition', 'attachment; filename={}'.format(path.split('/')[-1]))
+                    self.msg.attach(part)
+
+                if options:
+                    if options.get('delete'):
+                        os.remove(path)
 
             elif attachment.get('dataframe') is not None:
                 file = attachment.get('dataframe').to_html()
@@ -135,6 +168,7 @@ class EmailHandler:
 
         except Exception as e:
             self.logger.critical('SendMessage Failed with error message: {}'.format(e))
+
 
 
 def batch(iterable, size):
