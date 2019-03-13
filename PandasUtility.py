@@ -79,8 +79,8 @@ def get_category_size(df, max_cat=50):
     return [(c, len(df[c].cat.categories), min(max_cat, len(df[c].cat.categories) // 2)) for c in cat]
 
 
-def sort_columns(df):
-    return df[sorted(df.columns)]
+def sort_columns(df, reverse=False):
+    return df[sorted(df.columns, reverse=reverse)]
 
 
 if __name__ == '__main__':
