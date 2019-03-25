@@ -43,8 +43,8 @@ def auto_dates(df, date_name='date', time=False):
         df['second'] = T.dt.second
     df['year'] = T.dt.year
     df['month'] = T.dt.month.astype(CategoricalDtype(categories=range(1, 13)))
-    df['day'] = T.dt.day.astype(CategoricalDtype(categories=range(1, 32)))
     df['week'] = T.dt.weekofyear.astype(CategoricalDtype(categories=range(1, 54)))
+    df['day'] = T.dt.day.astype(CategoricalDtype(categories=range(1, 32)))
     df['dow'] = T.dt.dayofweek.astype(CategoricalDtype(categories=range(0, 7)))
     df['doy'] = T.dt.dayofyear.astype(CategoricalDtype(categories=range(0, 366)))
     df['start_month'] = T.dt.is_month_start.astype('int')
