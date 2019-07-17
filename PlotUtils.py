@@ -15,7 +15,7 @@ def set_size(w, h, ax=None):
     ax.figure.set_size_inches(figw, figh)
 
 
-def smooth(scalars, weight):
+def smooth(scalars, weight=0.5):
     """ Python TensorBoard Smoothing function """
     last = scalars[0]
     smoothed = list()
@@ -25,3 +25,16 @@ def smooth(scalars, weight):
         last = smoothed_val
 
     return smoothed
+
+
+if __name__ == '__main__':
+    import matplotlib.pyplot as plt
+
+    x = [0.12, 0.15, 0.11, 0.2, 0.1, 0.12, 1.5]
+    y = smooth(x, 0.75)
+    l = range(len(x))
+
+    plt.plot(l, x)
+    plt.plot(l, y)
+
+    plt.show()
